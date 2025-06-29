@@ -1,7 +1,7 @@
 package com.ameltaleb.users.infra.persistence;
 
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ameltaleb.users.domain.model.User;
@@ -16,15 +16,27 @@ import com.ameltaleb.users.infra.mapper.UserMapper;
 @Repository
 public class JpaUserRepository implements UserRepository {
 
-    private final SpringDataUserRepository springRepo;
+    private final SpringDataUserRepository springDataUserRepository;
 
-    public JpaUserRepository(SpringDataUserRepository springRepo) {
-        this.springRepo = springRepo;
+    public JpaUserRepository(SpringDataUserRepository springDataUserRepository) {
+        this.springDataUserRepository = springDataUserRepository;
     }
     
     @Override
     public List<User> findAll() {
-        return springRepo.findAll().stream().map(UserMapper::toDomain).toList();
+        return springDataUserRepository.findAll().stream().map(UserMapper::toDomain).toList();
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return springDataUserRepository.findByEmail(email).map(UserMapper::toDomain);
+    }
+
+    @Override
+    public User save(User user) {
+        UserEntity entity = UserMapper.toEntity(user);
+        UserEntity saved = springDataUserRepository.save(entity);
+        return UserMapper.toDomain(saved);
     }
     
 }
