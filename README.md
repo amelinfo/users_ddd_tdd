@@ -76,3 +76,16 @@ Example error response:
 {
   "error": "Email already used: joan@mail.com"
 }
+
+![screencapture-localhost-8080-swagger-ui-index-html-2025-06-29-17_56_43](https://github.com/user-attachments/assets/273df058-8aa4-4fef-8dbd-2669e1f17541)
+
+
+
+![question 1 postman](https://github.com/user-attachments/assets/12903ee3-0bce-4931-947e-26b3c8ea5a93)
+
+
+
+![question 2 2](https://github.com/user-attachments/assets/344510b2-e544-42a1-a593-cabe28f5750d)
+
+
+
