@@ -32,10 +32,10 @@ class UserControllerIntegrationTest {
             .andExpect(jsonPath("$").isArray());
     }
 
-    @Disabled
+   @Disabled
     @Test
     void shouldCreateUserSuccessfully() throws Exception {
-        User newUser = new User(null, "Leo", "leo@mail.com");
+        User newUser = new User(null, "Leo", "leo@mail.com", false);
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ class UserControllerIntegrationTest {
     @Test
     void shouldReturnConflictIfEmailExists() throws Exception {
         //"ana@mail.com" already exists in data.sql
-        User existingUser = new User(null, "Joan", "joan@mail.com");
+        User existingUser = new User(null, "Joan", "joan@mail.com", false);
 
     mockMvc.perform(post("/users")
             .contentType(MediaType.APPLICATION_JSON)
@@ -63,5 +63,39 @@ class UserControllerIntegrationTest {
             .content(objectMapper.writeValueAsString(existingUser)))
             .andExpect(status().isConflict())
             .andExpect(content().string("Email already used: ana@mail.com"));
+    }
+
+    @Test
+    void shouldActivateUserSuccessfully() throws Exception {
+        // Ajoute un utilisateur initialement inactif
+        User newUser = new User(null, "InactiveUser", "inactive@mail.com", false);
+        
+        String json = objectMapper.writeValueAsString(newUser);
+
+        // Création
+        String response = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                        .andExpect(status().isCreated())
+                        .andReturn().getResponse().getContentAsString();
+        System.out.println("Response: " + response);
+        // Récupération de l'id généré
+        Long userId = objectMapper.readTree(response).get("id").asLong();
+
+        // Activation
+        mockMvc.perform(patch("/users/" + userId + "/activate"))
+                .andExpect(status().isOk());
+        System.out.println("Response body: " + response);
+        // Vérifie que l'utilisateur est maintenant actif
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id==" + userId + ")].active").value(true));
+    }
+
+    @Test
+    void shouldReturnNotFoundIfUserDoesNotExist() throws Exception {
+        mockMvc.perform(patch("/users/9999/activate"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with id: 9999"));
     }
 }

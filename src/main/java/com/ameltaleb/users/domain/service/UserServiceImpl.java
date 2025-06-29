@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ameltaleb.users.domain.exceptions.EmailAlreadyUsedException;
+import com.ameltaleb.users.domain.exceptions.UserNotFoundException;
 import com.ameltaleb.users.domain.model.User;
 import com.ameltaleb.users.domain.port.in.UserService;
 import com.ameltaleb.users.domain.port.out.UserRepository;
@@ -34,4 +35,12 @@ public class UserServiceImpl implements UserService{
         return userRepository.save(user);
     }
 
+    @Override
+    public void activateUser(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
+        user.setActive(true);
+        userRepository.save(user);
+    }
+    
 }

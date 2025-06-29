@@ -38,7 +38,7 @@ public class UserControllerTest {
     }
     @Test
     void testGetAllUsers() throws Exception {
-        when(userService.getAllUsers()).thenReturn(List.of(new User(1L, "Joan", "joan@mail.com")));
+        when(userService.getAllUsers()).thenReturn(List.of(new User(1L, "Joan", "joan@mail.com", false)));
 
         mockMvc.perform(get("/users"))
                .andExpect(status().isOk())

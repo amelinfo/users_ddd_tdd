@@ -2,6 +2,7 @@ package com.ameltaleb.users.domain.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ameltaleb.users.domain.exceptions.EmailAlreadyUsedException;
+import com.ameltaleb.users.domain.exceptions.UserNotFoundException;
 import com.ameltaleb.users.domain.model.User;
 import com.ameltaleb.users.domain.port.out.UserRepository;
 
@@ -40,8 +42,8 @@ public class UserServiceImplTest {
          * #RED : if the method is not yet implemented => it will fail
          */
         List<User> mockUsers = Arrays.asList(
-            new User(1L, "Joan", "joan@mail.com"),
-            new User(2L, "Victor", "victor@mail.com")
+            new User(1L, "Joan", "joan@mail.com", true),
+            new User(2L, "Victor", "victor@mail.com", false)
         );
         /*
          * Configure the mock
@@ -66,8 +68,8 @@ public class UserServiceImplTest {
     @Test
     void testCreateUser() {
 
-        User user = new User(null, "Ana", "ana@mail.com");
-        User savedUser = new User(3L, "Ana", "ana@mail.com");
+        User user = new User(null, "Ana", "ana@mail.com", true);
+        User savedUser = new User(3L, "Ana", "ana@mail.com", false);
 
         when(userRepository.findByEmail("ana@mail.com")).thenReturn(Optional.empty());
         when(userRepository.save(user)).thenReturn(savedUser);
@@ -82,12 +84,35 @@ public class UserServiceImplTest {
     @Test
     void shouldThrowExceptionIfEmailAlreadyExists() {
 
-        User user = new User(null, "Ana", "ana@mail.com");
+        User user = new User(null, "Ana", "ana@mail.com", false);
         when(userRepository.findByEmail("ana@mail.com")).thenReturn(Optional.of(user));
 
         assertThrows(EmailAlreadyUsedException.class, () -> userService.createUser(user));
 
         verify(userRepository, times(1)).findByEmail("ana@mail.com");
+        verify(userRepository, never()).save(any());
+    }
+
+        @Test
+    void shouldActivateUserSuccessfully() {
+        User user = new User(1L, "Joan", "joan@mail.com", false);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.activateUser(1L);
+
+        assertTrue(user.isActive(), "User should be active");
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void shouldThrowUserNotFoundExceptionWhenUserNotExists() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+            userService.activateUser(99L);
+        });
+
+        assertEquals("User not found with id : 99", exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 }

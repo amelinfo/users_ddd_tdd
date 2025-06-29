@@ -38,5 +38,11 @@ public class JpaUserRepository implements UserRepository {
         UserEntity saved = springDataUserRepository.save(entity);
         return UserMapper.toDomain(saved);
     }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return springDataUserRepository.findById(id).map(UserMapper::toDomain);
+    }
+    
     
 }

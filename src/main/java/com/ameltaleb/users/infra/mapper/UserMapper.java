@@ -6,10 +6,20 @@ import com.ameltaleb.users.infra.persistence.UserEntity;
 public class UserMapper {
 
     public static User toDomain(UserEntity entity) {
-        return new User(entity.getId(), entity.getName(), entity.getEmail());
+        User user = new User();
+        user.setId(entity.getId());
+        user.setName(entity.getName());
+        user.setEmail(entity.getEmail());
+        user.setActive(entity.isActive());
+        return user;
     }
 
     public static UserEntity toEntity(User user) {
-        return new UserEntity(user.getId(), user.getName(), user.getEmail());
+        UserEntity entity = new UserEntity();
+        entity.setId(user.getId());
+        entity.setName(user.getName());
+        entity.setEmail(user.getEmail());
+        entity.setActive(user.isActive());
+        return entity;
     }
 }

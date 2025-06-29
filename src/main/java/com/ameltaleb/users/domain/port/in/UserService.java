@@ -9,4 +9,5 @@ public interface UserService {
     
     List<User> getAllUsers();
     User createUser(User user) throws EmailAlreadyUsedException;
+    void activateUser(Long userId);
 }

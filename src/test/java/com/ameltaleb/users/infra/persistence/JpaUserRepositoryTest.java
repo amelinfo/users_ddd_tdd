@@ -29,8 +29,8 @@ public class JpaUserRepositoryTest {
     void testFindAll() {
         
         //prepare entities
-        UserEntity entity1 = new UserEntity(1L, "Joan", "joan@mail.com");
-        UserEntity entity2 = new UserEntity(2L, "Victor", "victor@mail.com");
+        UserEntity entity1 = new UserEntity(1L, "Joan", "joan@mail.com", false);
+        UserEntity entity2 = new UserEntity(2L, "Victor", "victor@mail.com", true);
 
         when(springDataUserRepository.findAll()).thenReturn(List.of(entity1, entity2));
         //call method

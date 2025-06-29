@@ -12,7 +12,7 @@ public class UserMapperTest {
     @Test
     void testToDomain() {
         // Given
-        UserEntity entity = new UserEntity(3L, "Ana", "ana@mail.com");
+        UserEntity entity = new UserEntity(3L, "Ana", "ana@mail.com", false);
 
         // When
         User domain = UserMapper.toDomain(entity);
@@ -26,7 +26,7 @@ public class UserMapperTest {
     @Test
     void testToEntity() {
         // Given
-        User domain = new User(2L, "Victor", "victor@mail.com");
+        User domain = new User(2L, "Victor", "victor@mail.com", true);
 
         // When
         UserEntity entity = UserMapper.toEntity(domain);
