@@ -1,10 +1,19 @@
 package com.ameltaleb.users.domain.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class User {
     
     private Long id;
+
+    @NotBlank(message = "Name is required")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email is invalid")
     private String email;
+    
     private boolean active;
 
     

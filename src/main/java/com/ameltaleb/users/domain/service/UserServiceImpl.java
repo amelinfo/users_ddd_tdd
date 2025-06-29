@@ -29,18 +29,34 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User createUser(User user) {
+        System.out.println("📩 Creating user: " + user);
+
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            System.out.println("❌ Email already exists: " + user.getEmail());
             throw new EmailAlreadyUsedException(user.getEmail());
         }
+
+        User saved = userRepository.save(user);
+        System.out.println("✅ User saved: " + saved);
+        return saved;
+    }
+
+    @Override
+    public User activateUser(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
+        user.setActive(true);
         return userRepository.save(user);
     }
 
     @Override
-    public void activateUser(Long id) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(id));
-        user.setActive(true);
-        userRepository.save(user);
+    public User desactivateUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException(userId));
+        user.setActive(false);
+        return userRepository.save(user);
     }
+
+    
     
 }
