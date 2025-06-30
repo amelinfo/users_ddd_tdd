@@ -10,6 +10,8 @@ import com.ameltaleb.users.domain.model.User;
 import com.ameltaleb.users.domain.port.in.UserService;
 import com.ameltaleb.users.domain.port.out.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 /**
  * to save the bean
  */
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public User createUser(User user) {
         System.out.println("📩 Creating user: " + user);
 
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public User activateUser(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id));
@@ -50,6 +54,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public User desactivateUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException(userId));
